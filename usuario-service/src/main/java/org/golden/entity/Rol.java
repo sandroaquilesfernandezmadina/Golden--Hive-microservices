@@ -1,4 +1,4 @@
-package org.golden.model;
+package org.golden.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

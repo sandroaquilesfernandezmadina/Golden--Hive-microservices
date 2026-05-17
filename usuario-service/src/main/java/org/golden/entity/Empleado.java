@@ -1,4 +1,4 @@
-package org.golden.model;
+package org.golden.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -21,7 +21,7 @@ public class Empleado {
     private Integer empleadoId;
 
     @ManyToOne
-    @JoinColumn(name = "usuarioId")
+    @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
     private String nombres;

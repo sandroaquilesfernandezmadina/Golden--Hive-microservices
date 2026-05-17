@@ -1,0 +1,11 @@
+package org.golden.repository;
+
+import org.golden.entity.Rol;
+import org.golden.entity.Usuario;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+import java.util.Optional;
+
+public interface RolRepository extends JpaRepository <Rol, Integer>  {
+    Optional<Rol> findByNombreRol(String nombreRol);
+}

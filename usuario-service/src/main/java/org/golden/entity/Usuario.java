@@ -1,4 +1,4 @@
-package org.golden.model;
+package org.golden.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -18,10 +18,22 @@ public class Usuario {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer usuarioId;
-    private String suerName;
+
+    @ManyToOne
+    @JoinColumn(name = "rol_id")
+    private Rol rol;
+
+    private String userName;
+
     private String correo;
+
     private String passwordHash;
+
+    //lo declaramos string por que guardara un "activo" y no un 0
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
     private EstadoUsuario estado;
+
     private LocalDateTime fechaRegistro;
 
     //facilita el registro de fecha automatico

@@ -1,4 +1,4 @@
-package org.golden.model;
+package org.golden.entity;
 
 public enum EstadoUsuario {
     ACTIVO,
