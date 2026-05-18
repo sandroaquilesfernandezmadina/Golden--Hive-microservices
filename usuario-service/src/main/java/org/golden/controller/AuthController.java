@@ -1,5 +1,6 @@
 package org.golden.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.golden.dto.auth.LoginRequest;
 import org.golden.dto.auth.LoginResponse;
@@ -18,12 +19,12 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public UsuarioResponse register(@RequestBody RegisterRequest request){
+    public UsuarioResponse register(@Valid @RequestBody RegisterRequest request){
         return authService.register(request);
     }
 
     @PostMapping("/login")
-    public LoginResponse login (@RequestBody LoginRequest request){
+    public LoginResponse login (@Valid @RequestBody LoginRequest request){
         return authService.login(request);
     }
 }
