@@ -15,6 +15,7 @@ import org.golden.repository.ClienteRepository;
 import org.golden.repository.RolRepository;
 import org.golden.repository.UsuarioRepository;
 import org.golden.service.AuthService;
+import org.golden.service.JwtService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,7 @@ public class AuthServiceImpl implements AuthService {
     private final ClienteRepository clienteRepository;
     private final RolRepository rolRepository;
     private final PasswordEncoder passwordEncoder;
-    private final  JwtService jwtService;
+    private final JwtService jwtService;
 
 
     @Transactional

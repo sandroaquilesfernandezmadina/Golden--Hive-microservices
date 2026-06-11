@@ -5,6 +5,7 @@ import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
 import lombok.RequiredArgsConstructor;
 import org.golden.entity.Usuario;
+import org.golden.service.JwtService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,7 @@ import java.util.Map;
 
 @Service
 @RequiredArgsConstructor
-public class JwtServiceImpl implements JwtService{
+public class JwtServiceImpl implements JwtService {
 
   @Value("${jwt.secret}")
   private String secretKey;
@@ -46,6 +47,24 @@ public class JwtServiceImpl implements JwtService{
                .signWith(getSignInKey(), SignatureAlgorithm.HS256)
 
                .compact();
+    }
+
+    @Override
+    public String extractUsername(String token) {
+        return Jwts.parserBuilder()
+                .setSigningKey(getSignInKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getSubject();
+    }
+
+    @Override
+    public boolean isTokenValid(String token, Usuario usuario) {
+
+        String correo = extractUsername(token);
+
+        return correo.equals(usuario.getCorreo());
     }
 
     private Key getSignInKey(){
