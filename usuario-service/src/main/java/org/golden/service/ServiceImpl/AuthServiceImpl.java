@@ -1,6 +1,7 @@
 package org.golden.service.ServiceImpl;
 
 import lombok.RequiredArgsConstructor;
+import org.golden.exeption.BadRequestException;
 import org.golden.dto.auth.LoginRequest;
 import org.golden.dto.auth.LoginResponse;
 import org.golden.dto.auth.RegisterRequest;
@@ -9,6 +10,7 @@ import org.golden.entity.Cliente;
 import org.golden.entity.EstadoUsuario;
 import org.golden.entity.Rol;
 import org.golden.entity.Usuario;
+import org.golden.exeption.ResourceNotFoundException;
 import org.golden.repository.ClienteRepository;
 import org.golden.repository.RolRepository;
 import org.golden.repository.UsuarioRepository;
@@ -24,17 +26,19 @@ public class AuthServiceImpl implements AuthService {
     private final ClienteRepository clienteRepository;
     private final RolRepository rolRepository;
     private final PasswordEncoder passwordEncoder;
+    private final  JwtService jwtService;
+
 
     @Transactional
     @Override
     public UsuarioResponse register(RegisterRequest request) {
         // 🔍 Validar correo duplicado
         if (usuarioRepository.findByCorreo(request.getCorreo()).isPresent()) {
-            throw new RuntimeException("El correo ya está registrado");
+            throw new BadRequestException("El correo ya está registrado");
         }
         // validad el nombre del usuario
         if (usuarioRepository.findByUserName(request.getUserName()).isPresent()){
-            throw new RuntimeException("el nombre de usuario ya existe");
+            throw new BadRequestException("el nombre de usuario ya existe");
         }
 
         //crear usuario
@@ -45,7 +49,7 @@ public class AuthServiceImpl implements AuthService {
         usuario.setEstado(EstadoUsuario.ACTIVO);
 
         Rol rolCliente = rolRepository.findByNombreRol("CLIENTE")
-                .orElseThrow(() -> new RuntimeException("el rol CLIENTE no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("el rol CLIENTE no encontrado"));
 
         usuario.setRol(rolCliente);
 
@@ -72,20 +76,23 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public LoginResponse login(LoginRequest request) {
         Usuario usuario = usuarioRepository.findByCorreo(request.getCorreo())
-                .orElseThrow(() -> new RuntimeException("usuario no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("usuario no encontrado"));
 
         //validacion de contraseña
-        if (!passwordEncoder.matches(request.getPassword(), usuario.getPasswordHash())) {
-            throw new RuntimeException("Credenciales incorrectas");
+        if (!passwordEncoder.matches(
+                request.getPassword(),
+                usuario.getPasswordHash()
+        )) {
+            throw new BadRequestException("Credenciales incorrectas");
         }
 
         // ⚠️ JWT aún no implementado
-        String token = "TOKEN_TEMPORAL";
+        String token = jwtService.generateToken(usuario);
 
         return new LoginResponse(
                 token,
                 usuario.getUserName(),
-                "CLIENTE"
+                usuario.getRol().getNombreRol()
         );
     }
 }
