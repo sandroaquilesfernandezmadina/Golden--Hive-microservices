@@ -38,13 +38,13 @@ public class AuthServiceImpl implements AuthService {
             throw new BadRequestException("El correo ya está registrado");
         }
         // validad el nombre del usuario
-        if (usuarioRepository.findByUserName(request.getUserName()).isPresent()){
+        if (usuarioRepository.findByAlias(request.getAlias()).isPresent()){
             throw new BadRequestException("el nombre de usuario ya existe");
         }
 
         //crear usuario
         Usuario usuario = new Usuario();
-        usuario.setUserName(request.getUserName());
+        usuario.setAlias(request.getAlias());
         usuario.setCorreo(request.getCorreo().toLowerCase().trim());
         usuario.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         usuario.setEstado(EstadoUsuario.ACTIVO);
@@ -69,7 +69,7 @@ public class AuthServiceImpl implements AuthService {
 
         return new UsuarioResponse(
                 guardado.getUsuarioId(),
-                guardado.getUserName(),
+                guardado.getAlias(),
                 guardado.getCorreo()
         );
     }
@@ -92,7 +92,7 @@ public class AuthServiceImpl implements AuthService {
 
         return new LoginResponse(
                 token,
-                usuario.getUserName(),
+                usuario.getAlias(),
                 usuario.getRol().getNombreRol()
         );
     }

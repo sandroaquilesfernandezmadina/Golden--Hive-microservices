@@ -1,5 +1,6 @@
 package org.golden.dto.usuario;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,9 +10,9 @@ import lombok.Setter;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
-public class UsuarioResponse {
-   private Integer usuarioId;
-   private String alias;
-   private String correo;
-
+public class PerfilResponse {
+    private Integer usuarioId;
+    private String alias;
+    private String correo;
+    private String rol;
 }

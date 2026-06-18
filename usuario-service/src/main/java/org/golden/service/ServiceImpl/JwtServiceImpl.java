@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import org.golden.entity.Usuario;
 import org.golden.service.JwtService;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.security.Key;
@@ -32,7 +33,7 @@ public class JwtServiceImpl implements JwtService {
         Map<String, Object> claims = new HashMap<>();
 
        claims.put("rol", usuario.getRol().getNombreRol());
-       claims.put("userName", usuario.getUserName());
+       claims.put("userName", usuario.getAlias());
 
        return Jwts.builder()
 
@@ -60,11 +61,11 @@ public class JwtServiceImpl implements JwtService {
     }
 
     @Override
-    public boolean isTokenValid(String token, Usuario usuario) {
+    public boolean isTokenValid(String token, UserDetails userDetails) {
 
         String correo = extractUsername(token);
 
-        return correo.equals(usuario.getCorreo());
+        return correo.equals(userDetails.getUsername());
     }
 
     private Key getSignInKey(){

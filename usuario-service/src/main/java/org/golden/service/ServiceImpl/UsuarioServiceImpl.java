@@ -18,7 +18,7 @@ public class UsuarioServiceImpl implements UsuarioService {
     public UsuarioResponse register(RegisterRequest request) {
         Usuario usuario = new Usuario();
 
-        usuario.setUserName(request.getUserName());
+        usuario.setAlias(request.getAlias());
         usuario.setCorreo(request.getCorreo());
         usuario.setPasswordHash(request.getPassword());
 
@@ -26,7 +26,7 @@ public class UsuarioServiceImpl implements UsuarioService {
 
         UsuarioResponse response = new UsuarioResponse();
         response.setUsuarioId(guardado.getUsuarioId());
-        response.setUserName(guardado.getUserName());
+        response.setAlias(guardado.getAlias());
         response.setCorreo(guardado.getCorreo());
 
         return response;

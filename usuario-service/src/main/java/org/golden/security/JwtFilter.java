@@ -1,4 +1,4 @@
-package org.golden.service;
+package org.golden.security;
 
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -7,8 +7,10 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.golden.entity.Usuario;
 import org.golden.repository.UsuarioRepository;
+import org.golden.service.JwtService;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.OncePerRequestFilter;
 
@@ -21,7 +23,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UsuarioRepository usuarioRepository;
-
+    private final CustomUserDetailsService  customUserDetailsService;
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -44,17 +46,16 @@ public class JwtFilter extends OncePerRequestFilter {
         String correo = jwtService.extractUsername(token);
 
         //busca el usuario en la base de datos
-        Usuario usuario = usuarioRepository.findByCorreo(correo)
-        .orElse(null);
+        UserDetails userDetails =
+                customUserDetailsService.loadUserByUsername(correo);
 
-        if(usuario != null &&
-        jwtService.isTokenValid(token, usuario)){
+        if(jwtService.isTokenValid(token, userDetails)){
 
             UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(
-                            usuario,
+                            userDetails,
                             null,
-                            null
+                            userDetails.getAuthorities()
                     );
 
             //le dice a spring que este usuario ya está autenticado

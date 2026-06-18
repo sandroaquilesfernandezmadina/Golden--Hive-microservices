@@ -9,5 +9,5 @@ public interface UsuarioRepository extends JpaRepository <Usuario, Integer> {
 
     // Spring infiere: SELECT * FROM usuario WHERE correo = ?
     Optional<Usuario> findByCorreo(String correo);
-    Optional<Usuario> findByUserName(String userName);
+    Optional<Usuario> findByAlias(String alias);
 }

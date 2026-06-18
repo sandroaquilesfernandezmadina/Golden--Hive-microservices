@@ -11,7 +11,7 @@ import lombok.Setter;
 public class RegisterRequest {
 
     @NotBlank(message = "El usuario es obliagotorio")
-    private String userName;
+    private String alias;
 
     @Email(message = "correo inválido")
     @NotBlank(message = "el correo es obligatorio")
