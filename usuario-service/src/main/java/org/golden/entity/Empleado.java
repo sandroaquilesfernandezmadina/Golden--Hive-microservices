@@ -20,7 +20,7 @@ public class Empleado {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer empleadoId;
 
-    @ManyToOne
+    @OneToOne
     @JoinColumn(name = "usuario_id")
     private Usuario usuario;
 
@@ -30,6 +30,11 @@ public class Empleado {
     private String cargo;
 
     private LocalDateTime fechaContratacion;
+    // facilita el registro de fecha automaticamente.
+    @PrePersist
+    public void prePersist() {
+        this.fechaContratacion = LocalDateTime.now();
+    }
     private BigDecimal salario;
 
 }

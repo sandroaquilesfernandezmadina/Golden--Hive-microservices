@@ -61,4 +61,12 @@ public class AuthController {
         return  "Bienvenido Cliente";
     }
 
+
+    @GetMapping("/empleado")
+    @PreAuthorize("hasRole('EMPLEADO')")
+    public String empleado(){
+        return  "Bienvenido Empleado";
+    }
+
+
 }
