@@ -16,6 +16,7 @@ import org.golden.repository.UsuarioRepository;
 import org.golden.service.EmpleadoService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -52,6 +53,8 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     }
 
     @Override
+    @Transactional // usuario  + empleado se guardan juntos o ninguno
+    //(rollback si falla)
     public EmpleadoResponse register(EmpleadoRequest request) {
         //validacion de correo duplicado
         if(usuarioRepository.findByCorreo(request.getCorreo()).isPresent()){
@@ -65,6 +68,7 @@ public class EmpleadoServiceImpl implements EmpleadoService {
         // crear usuario
         Usuario usuario = new Usuario();
         usuario.setAlias(request.getAlias());
+        //Minsma normalizacion que en registro de cliente
         usuario.setCorreo(request.getCorreo());
         usuario.setPasswordHash(passwordEncoder.encode(request.getPassword()));
         usuario.setEstado(EstadoUsuario.ACTIVO);
@@ -143,11 +147,15 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     }
 
     @Override
+    @Transactional
     public void delete(Integer id) {
         Empleado empleado  = empleadoRepository.findById(id)
                 .orElseThrow(()-> new ResourceNotFoundException("Empleado no encontrado con el id: " + id));
 
+        Usuario usuario = empleado.getUsuario();
+
         empleadoRepository.delete(empleado);
+        usuarioRepository.delete(usuario);
     }
 
 
@@ -156,7 +164,7 @@ public class EmpleadoServiceImpl implements EmpleadoService {
     public void cambiarEstado(Integer empleadoId, EstadoUsuario estado) {
         Empleado empleado = empleadoRepository.findById(empleadoId)
                 .orElseThrow(() ->
-                new ResourceNotFoundException("mpleado no encontrado"));
+                new ResourceNotFoundException("empleado no encontrado"));
 
         Usuario usuario = empleado.getUsuario();
 

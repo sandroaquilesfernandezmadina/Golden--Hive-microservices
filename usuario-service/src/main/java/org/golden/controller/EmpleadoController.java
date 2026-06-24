@@ -24,10 +24,10 @@ public class    EmpleadoController {
         return empleadoService.findAll();
     }
 
-    //Crear empleado
-    @PostMapping
-    @PreAuthorize("hasRole('ADMIN')")
+    //Crear empleado - una sola anotacion de una ruta evita
+    //conflictos entre @PostMapping y @RequestMapping
     @RequestMapping("/registrar")
+    @PreAuthorize("hasRole('ADMIN')")
     public EmpleadoResponse register(
             @Valid @RequestBody EmpleadoRequest request){
 
@@ -50,9 +50,8 @@ public class    EmpleadoController {
         return empleadoService.findById(id);
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{id}/actualizar")
     @PreAuthorize("hasRole('ADMIN')")
-    @RequestMapping("/actualizar")
     public EmpleadoResponse update(@PathVariable Integer id, @RequestBody EmpleadoRequest request){
         return empleadoService.update(id, request);
     }

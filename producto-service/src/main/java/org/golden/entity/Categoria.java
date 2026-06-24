@@ -1,4 +1,4 @@
 package org.golden.entity;
 
-public class producto {
+public class Categoria {
 }

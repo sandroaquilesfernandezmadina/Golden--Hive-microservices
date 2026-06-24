@@ -35,7 +35,9 @@ public class SecurityConfig {
                 )
 
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**").permitAll()
+                        // Solo registro y login son publicos; el resto de  /auth requiere JWT
+                        .requestMatchers("/auth/register", "/auth/login").permitAll()
+                        .requestMatchers("/auth/**").authenticated()
                         .anyRequest().authenticated()
                 )
 

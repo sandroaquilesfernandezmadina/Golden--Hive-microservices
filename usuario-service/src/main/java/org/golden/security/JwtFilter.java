@@ -22,8 +22,8 @@ import java.io.IOException;
 public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
-    private final UsuarioRepository usuarioRepository;
     private final CustomUserDetailsService  customUserDetailsService;
+
     @Override
     protected void doFilterInternal(
             HttpServletRequest request,
@@ -50,7 +50,8 @@ public class JwtFilter extends OncePerRequestFilter {
                 customUserDetailsService.loadUserByUsername(correo);
 
         if(jwtService.isTokenValid(token, userDetails)){
-
+            // Token valido: registrados al  usuario en el
+            // contexto de spring Security
             UsernamePasswordAuthenticationToken authToken =
                     new UsernamePasswordAuthenticationToken(
                             userDetails,

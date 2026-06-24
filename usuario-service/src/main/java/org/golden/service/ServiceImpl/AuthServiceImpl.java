@@ -76,18 +76,22 @@ public class AuthServiceImpl implements AuthService {
 
     @Override
     public LoginResponse login(LoginRequest request) {
+        // Normaliza el correo igual que en el registro para evitar duplicados por mayúsculas
+        String correo = request.getCorreo().toLowerCase().trim();
+
+        // Mismo mensaje si no existe o la contraseña falla (evita revelar si el correo está registrado)
         Usuario usuario = usuarioRepository.findByCorreo(request.getCorreo())
-                .orElseThrow(() -> new ResourceNotFoundException("usuario no encontrado"));
+                .orElseThrow(() -> new ResourceNotFoundException("Credenciales incorrectas"));
 
         //validacion de contraseña
-        if (!passwordEncoder.matches(
-                request.getPassword(),
-                usuario.getPasswordHash()
-        )) {
+        if (!passwordEncoder.matches(request.getPassword(), usuario.getPasswordHash())) {
             throw new BadRequestException("Credenciales incorrectas");
         }
-
-        // ⚠️ JWT aún no implementado
+        // usuario INACTIVO o BLOQUEADO no pueden iniciar sesión
+        if(!usuario.isEnabled()){
+            throw new BadRequestException("Credenciales incorrectas");
+        }
+        
         String token = jwtService.generateToken(usuario);
 
         return new LoginResponse(

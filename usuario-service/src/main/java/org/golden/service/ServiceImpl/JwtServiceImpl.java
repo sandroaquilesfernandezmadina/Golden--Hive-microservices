@@ -9,7 +9,6 @@ import org.golden.service.JwtService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
-
 import java.security.Key;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,6 +17,7 @@ import java.util.Map;
 @Service
 @RequiredArgsConstructor
 public class JwtServiceImpl implements JwtService {
+
 
   @Value("${jwt.secret}")
   private String secretKey;
@@ -62,10 +62,25 @@ public class JwtServiceImpl implements JwtService {
 
     @Override
     public boolean isTokenValid(String token, UserDetails userDetails) {
-
         String correo = extractUsername(token);
 
-        return correo.equals(userDetails.getUsername());
+        // El token debe pertenecer al usuario y no estar vencido
+        return correo.equals(userDetails.getUsername()) && !isTokenExpired(token);
+    }
+
+    //Lee la fecha de expiracion embebida en el JWT
+    private Date extractExpiration(String token){
+        return  Jwts.parserBuilder()
+                .setSigningKey(getSignInKey())
+                .build()
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+    }
+
+    //Rechaza token cuya fecha de expiracion ya paso
+    private boolean isTokenExpired(String token){
+        return extractExpiration(token).before(new Date());
     }
 
     private Key getSignInKey(){

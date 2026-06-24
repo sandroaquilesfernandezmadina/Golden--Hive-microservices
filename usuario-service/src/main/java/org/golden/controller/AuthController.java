@@ -35,7 +35,7 @@ public class AuthController {
 
     @GetMapping("/perfil")
     public PerfilResponse perfil(Authentication authentication) {
-
+        // Requiere JWT válido (SecurityConfig protege /auth/** excepto register y login)
         Usuario usuario = (Usuario) authentication.getPrincipal();
 
         return new PerfilResponse(

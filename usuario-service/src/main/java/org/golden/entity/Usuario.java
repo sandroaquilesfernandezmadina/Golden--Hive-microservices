@@ -86,6 +86,7 @@ public class Usuario implements UserDetails {
 
     @Override
     public boolean isEnabled() {
+        //solo los usuarios ACTIVO pueden autenticarse (usuario en login y JwtFilter)
         return estado == EstadoUsuario.ACTIVO;
     }
 }
